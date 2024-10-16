@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import dj_database_url
+import os
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,10 +86,19 @@ WSGI_APPLICATION = 'll_project.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # },
+
+    # RENDER
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        # Means the local postgresql database to run the project locally.
+        # You can remove this line if there is not local postgress database configured.
+        default='postgresql://postgres:postgres@localhost:5432/ll_project',
+        conn_max_age=600
+    )
 }
 
 
@@ -124,7 +136,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/' # RENDER. Added the first "/"
+
+# RENDER
+# This production code might break development mode, so we check whether we're in DEBUG mode
+if not DEBUG:
+    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -136,40 +157,3 @@ LOGIN_REDIRECT_URL = 'learning_logs:index'
 LOGOUT_REDIRECT_URL = 'learning_logs:index'
 LOGIN_URL = 'accounts:login'
 
-# Platform.sh settings.
-# from platformshconfig import Config
-
-# config = Config()
-# if config.is_valid_platform():
-#     ALLOWED_HOSTS.append('.platformsh.site')
-
-#     if config.appDir:
-#         STATIC_ROOT = Path(config.appDir) / 'static'
-#     if config.projectEntropy:
-#         SECRET_KEY = config.projectEntropy
-
-#     if not config.in_build():
-#         db_settings = config.credentials('database')
-#         DATABASES = {
-#             'default': {
-#                 'ENGINE': 'django.db.backends.postgresql',
-#                 'NAME': db_settings['path'],
-#                 'USER': db_settings['username'],
-#                 'PASSWORD': db_settings['password'],
-#                 'HOST': db_settings['host'],
-#                 'PORT': db_settings['port'],
-#             },
-#         }
-
-
-
-# Deploying a Django Website for free in 2024: A Step-by-Step Guide to Free Hosting
-
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-import os
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static")
-]
-
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
