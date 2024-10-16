@@ -1,6 +1,5 @@
 altgraph==0.17.4
 asgiref==3.8.1
-Babel==2.14.0
 cachetools==5.4.0
 certifi==2024.7.4
 charset-normalizer==3.3.2
@@ -12,6 +11,7 @@ defusedxml==0.7.1
 Django==5.1.2
 django-bootstrap5==24.3
 fonttools==4.51.0
+gunicorn==23.0.0
 idna==3.8
 iniconfig==2.0.0
 kiwisolver==1.4.5
@@ -31,3 +31,4 @@ sqlparse==0.5.1
 tenacity==9.0.0
 tzdata==2024.1
 urllib3==2.2.2
+whitenoise==6.7.0
